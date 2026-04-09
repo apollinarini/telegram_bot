@@ -4,18 +4,17 @@ from dotenv import load_dotenv
 from pytimeparse import parse
 
 
-def notify__progress(secs_left):
+def notify__progress(secs_left, seconds, answer):
     pbar = render_progressbar(seconds, seconds - secs_left)
     text = "Осталось секунд: {}\n{}".format(secs_left, pbar)
     bot.update_message(TG_CHAT_ID, answer, text)
 
 
 def time(TG_CHAT_ID, text):
-    global seconds, answer
     seconds = 0
     seconds = parse(text)
     answer = bot.send_message(TG_CHAT_ID, "Таймер запущен...")
-    bot.create_countdown(seconds, notify__progress)
+    bot.create_countdown(seconds, notify__progress, seconds=seconds, answer=answer)
     bot.create_timer(seconds, choose)
 
 
