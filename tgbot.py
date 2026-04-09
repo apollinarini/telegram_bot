@@ -4,23 +4,40 @@ from dotenv import load_dotenv
 from pytimeparse import parse
 
 
-def notify__progress(secs_left, seconds, answer):
+load_dotenv()
+tg_token = os.getenv("TELEGRAM_TOKEN")
+tg_chat_id = os.getenv("TELEGRAM_CHAT_ID")
+
+
+def main():
+    bot = ptbot.Bot(tg_token)
+    bot.reply_on_message(lambda chat_id, text: time(chat_id, text, bot))
+    bot.run_bot()
+
+
+def notify__progress(secs_left, seconds, answer, bot):
     pbar = render_progressbar(seconds, seconds - secs_left)
     text = "Осталось секунд: {}\n{}".format(secs_left, pbar)
-    bot.update_message(TG_CHAT_ID, answer, text)
+    bot.update_message(tg_chat_id, answer, text)
 
 
-def time(TG_CHAT_ID, text):
+def time(tg_chat_id, text, bot):
     seconds = 0
     seconds = parse(text)
-    answer = bot.send_message(TG_CHAT_ID, "Таймер запущен...")
-    bot.create_countdown(seconds, notify__progress, seconds=seconds, answer=answer)
-    bot.create_timer(seconds, choose)
+    answer = bot.send_message(tg_chat_id, "Таймер запущен...")
+    bot.create_countdown(
+        seconds,
+        notify__progress,
+        seconds=seconds,
+        answer=answer,
+        bot=bot,
+    )
+    bot.create_timer(seconds, choose, bot=bot)
 
 
-def choose():
+def choose(bot):
     message = "Время вышло!"
-    bot.send_message(TG_CHAT_ID, message)
+    bot.send_message(tg_chat_id, message)
 
 
 def render_progressbar(total, iteration, prefix='', suffix='', length=20, fill='█', zfill='░'):
@@ -33,11 +50,4 @@ def render_progressbar(total, iteration, prefix='', suffix='', length=20, fill='
 
 
 if __name__ == '__main__':
-    load_dotenv()
-    TG_TOKEN = os.getenv("TELEGRAM_TOKEN")
-    TG_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
-
-    bot = ptbot.Bot(TG_TOKEN)
-
-    bot.reply_on_message(time)
-    bot.run_bot()
+    main()
