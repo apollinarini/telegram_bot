@@ -1,12 +1,10 @@
-import os
 import ptbot
-from dotenv import load_dotenv
 from pytimeparse import parse
+from decouple import config
 
 
-load_dotenv()
-tg_token = os.getenv("TELEGRAM_TOKEN")
-tg_chat_id = os.getenv("TELEGRAM_CHAT_ID")
+tg_token = config("TELEGRAM_TOKEN")
+tg_chat_id = config("TELEGRAM_CHAT_ID")
 
 
 def main():
