@@ -3,12 +3,12 @@ from pytimeparse import parse
 from decouple import config
 
 
-tg_token = config("TELEGRAM_TOKEN")
-tg_chat_id = config("TELEGRAM_CHAT_ID")
+TG_TOKEN = config("TELEGRAM_TOKEN")
+TG_CHAT_ID = config("TELEGRAM_CHAT_ID")
 
 
 def main():
-    bot = ptbot.Bot(tg_token)
+    bot = ptbot.Bot(TG_TOKEN)
     bot.reply_on_message(lambda chat_id, text: time(chat_id, text, bot))
     bot.run_bot()
 
@@ -16,13 +16,12 @@ def main():
 def notify__progress(secs_left, seconds, answer, bot):
     pbar = render_progressbar(seconds, seconds - secs_left)
     text = "Осталось секунд: {}\n{}".format(secs_left, pbar)
-    bot.update_message(tg_chat_id, answer, text)
+    bot.update_message(TG_CHAT_ID, answer, text)
 
 
-def time(tg_chat_id, text, bot):
-    seconds = 0
+def time(chat_id, text, bot):
     seconds = parse(text)
-    answer = bot.send_message(tg_chat_id, "Таймер запущен...")
+    answer = bot.send_message(TG_CHAT_ID, "Таймер запущен...")
     bot.create_countdown(
         seconds,
         notify__progress,
@@ -35,7 +34,7 @@ def time(tg_chat_id, text, bot):
 
 def choose(bot):
     message = "Время вышло!"
-    bot.send_message(tg_chat_id, message)
+    bot.send_message(TG_CHAT_ID, message)
 
 
 def render_progressbar(total, iteration, prefix='', suffix='', length=20, fill='█', zfill='░'):
